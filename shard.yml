@@ -2,8 +2,14 @@ name: openai
 version: 0.1.0
 
 authors:
-  - your-name-here <your-email-here>
+  - Erik Berlin <sferik@gmail.com>
 
 crystal: 0.35.1
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+  webmock:
+    github: manastech/webmock.cr
 
 license: MIT

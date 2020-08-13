@@ -1,6 +1,7 @@
-# TODO: Write documentation for `Openai`
-module Openai
+module OpenAI
   VERSION = "0.1.0"
-
-  # TODO: Put your code here
 end
+
+require "json"
+
+require "./openai/**"
