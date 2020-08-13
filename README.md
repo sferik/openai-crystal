@@ -1,5 +1,7 @@
 # OpenAI API client library to access GPT-3 in Crystal
 
+[![Build Status](https://travis-ci.org/sferik/openai-crystal.svg?branch=main)](https://travis-ci.org/sferik/openai-crystal)
+
 ## Installation
 
 1. Add the dependency to your `shard.yml`:
