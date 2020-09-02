@@ -104,11 +104,7 @@ module OpenAI
 
       response_body = post("/v1/engines/#{engine}/search", body: body)
       search_results = JSON.parse(response_body)
-      results = Array(SearchResult).from_json(search_results["data"].to_json)
-      results.each.with_index do |result, index|
-        result.text = documents[index]
-      end
-      results
+      Array(SearchResult).from_json(search_results["data"].to_json)
     end
 
     private def get(path : String, headers : HTTP::Headers = default_headers) : String

@@ -1,8 +1,5 @@
 module OpenAI
-  class Engine
+  record Engine, id : String, owner : String, ready : Bool do
     include JSON::Serializable
-    property id : String
-    property owner : String
-    property ready : Bool
   end
 end

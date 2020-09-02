@@ -1,9 +1,5 @@
 module OpenAI
-  class Choice
+  record Choice, finish_reason : String?, index : Int32, logprobs : Logprobs?, text : String do
     include JSON::Serializable
-    property finish_reason : String?
-    property index : Int32
-    property logprobs : Logprobs?
-    property text : String
   end
 end

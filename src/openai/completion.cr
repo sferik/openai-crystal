@@ -1,10 +1,9 @@
 module OpenAI
-  class Completion
+  record Completion, choices : Array(Choice), created : Int32, id : String, model : String do
     include JSON::Serializable
-    property choices : Array(Choice)
-    @[JSON::Field(converter: Time::EpochConverter)]
-    property created : Time
-    property id : String
-    property model : String
+
+    def created_at
+      Time.unix(created)
+    end
   end
 end

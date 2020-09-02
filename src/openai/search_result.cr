@@ -1,8 +1,5 @@
 module OpenAI
-  class SearchResult
+  record SearchResult, document : Int32, score : Float64 do
     include JSON::Serializable
-    property document : Int32
-    property score : Float64
-    property text : String?
   end
 end
