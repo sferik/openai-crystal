@@ -5,23 +5,15 @@ module OpenAI
     class Error < Exception
     end
 
-    class LastResponse
-      getter date : Time
-      getter organization : String
-      getter processing_ms : Int32
-      getter request_id : String
-
-      def initialize(response : HTTP::Client::Response)
-        @date = Time::Format::HTTP_DATE.parse(response.headers.fetch("date", Time::Format::HTTP_DATE.format(Time.utc)).to_s)
-        @organization = response.headers.fetch("openai-organization", "none")
-        @processing_ms = response.headers.fetch("openai-processing-ms", "0").to_i
-        @request_id = response.headers.fetch("x-request-id", "")
-        @response = response
+    record LastResponse, date : Time, organization : String, processing_ms : Int32, request_id : String, response : HTTP::Client::Response do
+      def initialize(@response : HTTP::Client::Response)
+        @date = Time::Format::HTTP_DATE.parse(@response.headers.fetch("date", Time::Format::HTTP_DATE.format(Time.utc).to_s))
+        @organization = @response.headers.fetch("openai-organization", "none")
+        @processing_ms = @response.headers.fetch("openai-processing-ms", "0").to_i
+        @request_id = @response.headers.fetch("x-request-id", "")
       end
 
-      delegate status, to: @response
-      delegate status_code, to: @response
-      delegate status_message, to: @response
+      forward_missing_to(@response)
     end
 
     getter last_response : LastResponse?
