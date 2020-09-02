@@ -29,14 +29,6 @@ describe OpenAI::Client do
     end
   end
 
-  describe "#api_key" do
-    it "returns the API key" do
-      with_client do |client|
-        client.api_key.should eq(mock_api_key)
-      end
-    end
-  end
-
   describe "#default_engine" do
     it "returns the default engine" do
       with_client do |client|

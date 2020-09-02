@@ -25,7 +25,7 @@ module OpenAI
     end
 
     getter last_response : LastResponse?
-    property api_key : String
+    setter api_key : String
     property default_engine : String
 
     def initialize(api_key : String, default_engine : String = "davinci")
@@ -139,9 +139,9 @@ module OpenAI
       @client ||= HTTP::Client.new(URI.parse("https://api.openai.com"))
     end
 
-    private def headers
+    private def default_headers
       @headers ||= HTTP::Headers{
-        "Authorization" => "Bearer #{api_key}",
+        "Authorization" => "Bearer #{@api_key}",
         "Content-Type"  => "application/json",
       }
     end
