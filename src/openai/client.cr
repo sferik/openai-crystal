@@ -34,27 +34,14 @@ module OpenAI
     end
 
     def engine(id : String = default_engine)
-      response = client.get("/v1/engines/#{id}", headers: headers)
-      @last_response = LastResponse.new(response)
-      case response.status
-      when HTTP::Status::OK
-        Engine.from_json(response.body)
-      else
-        json = JSON.parse(response.body)
-        raise Error.new(json["error"]["message"].to_s)
-      end
+      engine = get("/v1/engines/#{id}")
+      Engine.from_json(engine)
     end
 
     def engines
-      response = client.get("/v1/engines", headers: headers)
-      @last_response = LastResponse.new(response)
-      json = JSON.parse(response.body)
-      case response.status
-      when HTTP::Status::OK
-        Array(Engine).from_json(json["data"].to_json)
-      else
-        raise Error.new(json["error"]["message"].to_s)
-      end
+      response_body = get("/v1/engines")
+      engines = JSON.parse(response_body)
+      Array(Engine).from_json(engines["data"].to_json)
     end
 
     def completions(prompt : String? = nil, max_tokens : Int32? = nil, temperature : Float64? = nil, top_p : Float64? = nil, n : Int32? = nil, logprobs : Int32? = nil, echo : Bool? = nil, stop : String? | Array(String) = nil, presence_penalty : Float64? = nil, frequency_penalty : Float64? = nil, engine : String = default_engine)
@@ -70,15 +57,9 @@ module OpenAI
         "presence_penalty"  => presence_penalty,
         "frequency_penalty" => frequency_penalty,
       }.compact
-      response = client.post("/v1/engines/#{engine}/completions", headers: headers, body: body.to_json)
-      @last_response = LastResponse.new(response)
-      case response.status
-      when HTTP::Status::OK
-        Completion.from_json(response.body)
-      else
-        json = JSON.parse(response.body)
-        raise Error.new(json["error"]["message"].to_s)
-      end
+
+      response_body = post("/v1/engines/#{engine}/completions", body: body)
+      Completion.from_json(response_body)
     end
 
     def completions(prompt : String? = nil, max_tokens : Int32? = nil, temperature : Float64? = nil, top_p : Float64? = nil, n : Int32? = nil, logprobs : Int32? = nil, echo : Bool? = nil, stop : String? | Array(String) = nil, presence_penalty : Float64? = nil, frequency_penalty : Float64? = nil, engine : String = default_engine, &block : Completion -> _)
@@ -120,18 +101,33 @@ module OpenAI
         "documents" => documents,
         "query"     => query,
       }.compact
-      response = client.post("/v1/engines/#{engine}/search", headers: headers, body: body.to_json)
+
+      response_body = post("/v1/engines/#{engine}/search", body: body)
+      search_results = JSON.parse(response_body)
+      results = Array(SearchResult).from_json(search_results["data"].to_json)
+      results.each.with_index do |result, index|
+        result.text = documents[index]
+      end
+      results
+    end
+
+    private def get(path : String, headers : HTTP::Headers = default_headers) : String
+      response = client.get(path, headers: headers)
+      handle_response(response)
+    end
+
+    private def post(path : String, body : Hash, headers : HTTP::Headers = default_headers) : String
+      response = client.post(path, headers: headers, body: body.to_json)
+      handle_response(response)
+    end
+
+    private def handle_response(response) : String
       @last_response = LastResponse.new(response)
-      json = JSON.parse(response.body)
-      case response.status
-      when HTTP::Status::OK
-        results = Array(SearchResult).from_json(json["data"].to_json)
-        results.each.with_index do |result, index|
-          result.text = documents[index]
-        end
-        results
+      if response.success?
+        response.body
       else
-        raise Error.new(json["error"]["message"].to_s)
+        error = JSON.parse(response.body)
+        raise Error.new(error["error"]["message"].to_s)
       end
     end
 
