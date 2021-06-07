@@ -69,7 +69,7 @@ module OpenAI
         "frequency_penalty" => frequency_penalty,
       }.compact
 
-      event_source = EventSource.new("https://api.openai.com/v1/engines/#{engine}/completions", base_headers: headers, body: body.to_json)
+      event_source = EventSource.new("https://api.openai.com/v1/engines/#{engine}/completions", base_headers: default_headers, body: body.to_json)
 
       event_source.on_message do |message|
         message.data.each do |datum|
