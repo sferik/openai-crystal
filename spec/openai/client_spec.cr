@@ -21,7 +21,7 @@ describe OpenAI::Client do
       .to_return(body: File.read("spec/fixtures/errors/not_found.json"), headers: response_headers, status: 404)
 
     it "raises an exception" do
-      expect_raises(OpenAI::Client::Error, "No engine with that ID: turing") do
+      expect_raises(OpenAI::Client::Error, "No model with that ID: turing") do
         with_client do |client|
           client.model("turing")
         end
@@ -63,7 +63,7 @@ describe OpenAI::Client do
       .with(headers: request_headers)
       .to_return(body: File.read("spec/fixtures/model.json"), headers: response_headers)
 
-    it "retrieves an engine" do
+    it "retrieves a model" do
       with_client do |client|
         model = client.model("davinci")
         model.id.should eq("davinci")
