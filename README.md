@@ -4,31 +4,28 @@
 
 ## Installation
 
-1. Add the dependency to your `shard.yml`:
+1.  Add the dependency to your `shard.yml`:
 
-   ```yaml
-   dependencies:
-     openai:
-       github: sferik/openai-crystal
-   ```
+    ```yaml
+    dependencies:
+      openai:
+        github: sferik/openai-crystal
+    ```
 
-2. Run `shards install`
+2.  Run `shards install`
 
 ## Usage
 
 ```crystal
 require "openai"
 
-openai_client = OpenAI::Client.new(api_key: ENV.fetch("OPENAI_API_KEY"), default_engine: "ada")
+openai_client = OpenAI::Client.new(api_key: ENV.fetch("OPENAI_API_KEY"), default_model: "ada")
 
-# List Engines
-openai_client.engines
+# List Models
+openai_client.models
 
-# Retrieve Engine
-openai_client.engine("babbage")
-
-# Search
-openai_client.search(documents: ["White House", "hospital", "school"], query: "the president")
+# Retrieve Model
+openai_client.model("babbage")
 
 # Create Completion
 openai_client.completions(prompt: "Once upon a time", max_tokens: 5)
