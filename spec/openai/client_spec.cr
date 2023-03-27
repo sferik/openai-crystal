@@ -95,27 +95,8 @@ describe OpenAI::Client do
       with_client do |client|
         prompt = "Once upon a time"
         max_tokens = 5
-        results = client.completions(prompt: prompt, max_tokens: max_tokens, engine: "ada")
+        results = client.completions(prompt: prompt, max_tokens: max_tokens, model: "ada")
         results.should be_a(OpenAI::Completion)
-      end
-    end
-  end
-
-  describe "#search" do
-    WebMock.stub(:post, "https://api.openai.com/v1/engines/ada/search")
-      .with(headers: request_headers)
-      .to_return(body: File.read("spec/fixtures/search.json"), headers: response_headers)
-
-    it "searches" do
-      with_client do |client|
-        documents = ["White House", "hospital", "school"]
-        query = "the president"
-        results = client.search(documents: documents, query: query, engine: "ada")
-        results.should be_a(Array(OpenAI::SearchResult))
-        first_result = results.first
-        first_result.document.should eq(0)
-        first_result.score.should be_a(Float64)
-        first_result.score.should be >= 0.0
       end
     end
   end

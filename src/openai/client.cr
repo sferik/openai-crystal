@@ -115,17 +115,6 @@ module OpenAI
       event_source.run
     end
 
-    def search(documents : Array(String), query : String, engine : String = default_engine)
-      body = {
-        "documents" => documents,
-        "query"     => query,
-      }.compact
-
-      response_body = post("/v1/engines/#{engine}/search", body: body)
-      search_results = JSON.parse(response_body)
-      Array(SearchResult).from_json(search_results["data"].to_json)
-    end
-
     private def get(path : String, headers : HTTP::Headers = default_headers) : String
       response = client.get(path, headers: headers)
       handle_response(response)
